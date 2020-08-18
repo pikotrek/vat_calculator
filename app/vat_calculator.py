@@ -1,6 +1,14 @@
+class InvalidTaxRateError(Exception):
+    pass
+
+
 class VatCalculator:
     def __init__(self, tax_rate):
-        self.tax_rate = tax_rate * .01
+        try:
+            assert tax_rate >= 0
+            self.tax_rate = tax_rate * .01
+        except AssertionError:
+            raise InvalidTaxRateError('Tax rate must be non-negative number.')
 
     def gross(self, net):
         return net * (1 + self.tax_rate)
