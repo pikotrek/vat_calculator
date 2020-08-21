@@ -27,7 +27,7 @@ def spec_set__list():
 
 class MockedCalc:
     def method1(self, net):
-        return net * 1.23
+        return net * 45.2233
 
 
 def spec__object():
@@ -102,7 +102,7 @@ def unsafe():
     try:
         print(mock.assert_not_call)
     except AttributeError as e:
-        print(f'Method \'{str(e)}\' doesn\'t exist.')
+        print(f'Method \'{e}\' doesn\'t exist.')
 
 
 def kwargs():
@@ -111,6 +111,69 @@ def kwargs():
     print(mock.param1)
     print(mock.param2)
     print(mock.param3)
+
+
+def patch_context_manager():
+    """patch a a context manager"""
+    with patch('app.main.VatCalculator') as mock:
+        print(mock.net(12))
+
+
+def patch_new():
+    """patch new"""
+    with patch('app.main.VatCalculator', new=MockedCalc()) as mock:
+        print(mock.method1(10))
+        # print(mock.net(10))
+
+
+def patch_create():
+    """patch create"""
+    try:
+        with patch('app.main.VatCalculator.non_existing_attr') as mock:
+            print(mock)
+    except AttributeError as e:
+        print(e)
+
+    with patch('app.main.VatCalculator.non_existing_attr', create=True) as mock:
+        print(mock)
+
+
+def patch_autospec():
+    """patch autospec"""
+    with patch('app.main.VatCalculator') as mock:
+        print(mock.gross(20))
+        print(mock.foo(124))
+
+    with patch('app.main.VatCalculator', autospec=True) as mock:
+        print(mock.gross(20))
+        try:
+            print(mock.foo(124))
+        except AttributeError as e:
+            print(e)
+
+
+def patch_new_callable():
+    """patch new_callable"""
+    with patch('app.main.VatCalculator', new_callable=MockedCalc) as mock:
+        print(mock.method1(10))
+        # print(mock.net(10))
+
+
+@patch('app.main.VatCalculator')
+def patch_decorator(mock):
+    """patch decorator"""
+    print(mock)
+
+
+@patch('app.main.MockedCalc', autospec=True)
+@patch('app.main.VatCalculator', autospec=True)
+def patch_multiple_decorators(mock_vc, mock_mc):
+    """patch multiple decorators"""
+    print(mock_vc)
+    print(mock_vc.gross(100))
+    print(mock_mc)
+    print(mock_mc.method1(100))
+    # print(mock_mc.gross(123))
 
 
 if __name__ == '__main__':
@@ -126,10 +189,15 @@ if __name__ == '__main__':
             wraps,
             unsafe,
             kwargs,
+            patch_context_manager,
+            patch_new,
+            patch_create,
+            patch_autospec,
+            patch_new_callable,
+            patch_decorator,
+            patch_multiple_decorators,
     ):
         print(f'EXAMPLE {counter}:', f.__doc__)
         f()
         print()
         counter += 1
-    # with patch('app.main.VatCalculator', spec=MockedCalc) as mock:
-    #     print(mock.net(123))
