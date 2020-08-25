@@ -12,7 +12,7 @@ def spec__list():
     print(mock.method2)
     # print(mock.method3)
     mock.method3 = lambda: 1
-    print(mock.method3)
+    print(mock.method3())
 
 
 def spec_set__list():
@@ -37,7 +37,7 @@ def spec__object():
     print(mock.method1)
     # print(mock.method3)
     mock.method3 = lambda: 1
-    print(mock.method3)
+    print(mock.method3())
 
 
 def side_effect_example(x):
@@ -136,6 +136,7 @@ def patch_create():
 
     with patch('app.main.VatCalculator.non_existing_attr', create=True) as mock:
         print(mock)
+        print(mock.non_existing_attr)
 
 
 def patch_autospec():
