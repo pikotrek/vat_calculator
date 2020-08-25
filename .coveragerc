@@ -1,6 +1,7 @@
 [report]
 omit =
     */tests/*
+    app/main.py
 
 [html]
 directory = coverage
